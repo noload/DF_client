@@ -27,6 +27,7 @@ const StatePage = () => {
 
   useEffect(() => {
     dispatch(getAllState());
+    setFilteredStates(states);
   }, [dispatch, navigate]);
 
   useEffect(() => {
@@ -37,8 +38,8 @@ const StatePage = () => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = sortedStates.filter(
       (state) =>
-        state.name.toLowerCase().includes(lowercasedQuery) ||
-        state.code.toLowerCase().includes(lowercasedQuery)
+        state?.name?.toLowerCase().includes(lowercasedQuery) ||
+        state?.code?.toLowerCase().includes(lowercasedQuery)
     );
     setFilteredStates(filtered);
   }, [searchQuery, sortedStates]);
@@ -91,7 +92,7 @@ const StatePage = () => {
               placeholder="Search by state name or code"
               className="border border-gray-300 rounded-lg p-2 w-[550px] focus:outline-none focus:ring-2 focus:ring-yellow-500 transition duration-300"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)} 
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
@@ -143,43 +144,44 @@ const StatePage = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredStates.map((state, index) => (
-                <tr
-                  key={state._id}
-                  className={`${
-                    index % 2 === 0 ? "bg-gray-100" : "bg-white"
-                  } hover:bg-gray-100 transition duration-200`}
-                >
-                  <td className="px-6 py-4 text-center">{state._id}</td>
-                  <td className="px-6 py-4 text-center">{state.name}</td>
-                  <td className="px-6 py-4 text-center">{state.code}</td>
-                  <td
-                    className={`px-6 py-4 font-semibold text-center ${
-                      state.status === "Active"
-                        ? "text-green-500"
-                        : "text-red-500"
-                    }`}
+              {filteredStates.length > 0 &&
+                filteredStates.map((state, index) => (
+                  <tr
+                    key={state._id}
+                    className={`${
+                      index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                    } hover:bg-gray-100 transition duration-200`}
                   >
-                    {state.status}
-                  </td>
-                  <td className="px-6 py-4 flex items-center justify-center space-x-4">
-                    <button
-                      onClick={() => handleEdit(state)}
-                      className="text-blue-500 hover:text-blue-700 transition duration-300"
-                      title="Edit"
+                    <td className="px-6 py-4 text-center">{state._id}</td>
+                    <td className="px-6 py-4 text-center">{state.name}</td>
+                    <td className="px-6 py-4 text-center">{state.code}</td>
+                    <td
+                      className={`px-6 py-4 font-semibold text-center ${
+                        state.status === "Active"
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }`}
                     >
-                      <FaEdit className="text-xl" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(state._id)}
-                      className="text-red-500 hover:text-red-700 transition duration-300"
-                      title="Delete"
-                    >
-                      <FaTrash className="text-xl" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                      {state.status}
+                    </td>
+                    <td className="px-6 py-4 flex items-center justify-center space-x-4">
+                      <button
+                        onClick={() => handleEdit(state)}
+                        className="text-blue-500 hover:text-blue-700 transition duration-300"
+                        title="Edit"
+                      >
+                        <FaEdit className="text-xl" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(state._id)}
+                        className="text-red-500 hover:text-red-700 transition duration-300"
+                        title="Delete"
+                      >
+                        <FaTrash className="text-xl" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { addState, updateState } from "../redux/stateSlice"; 
+import { addState, updateState } from "../redux/stateSlice";
 import { useNavigate, useLocation } from "react-router-dom";
 import Layout from "./Layout";
 import { FaArrowLeft } from "react-icons/fa";
-import { toast } from "react-toastify"; 
-import "react-toastify/dist/ReactToastify.css"; 
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AddEditStatePage = () => {
   const dispatch = useDispatch();
@@ -18,40 +18,42 @@ const AddEditStatePage = () => {
   const [formData, setFormData] = useState({
     name: "",
     code: "",
-    status: "Active", 
+    status: "Active",
   });
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+    const token =
+      localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
     if (!token || token == undefined) {
-      navigate('/');
+      navigate("/");
     }
 
     if (isEditing && existingState) {
       setFormData(existingState);
     }
-  }, [isEditing, existingState,navigate]);
+  }, [isEditing, existingState, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-
   const handleSubmit = (e) => {
     e.preventDefault();
     try {
       if (isEditing) {
-        dispatch(updateState(formData)); 
+        dispatch(updateState(formData));
         toast.success("State updated successfully!");
+        navigate("/state");
       } else {
-        dispatch(addState(formData)); 
-        toast.success("State added successfully!"); // Success toast for adding
+        dispatch(addState(formData));
+        toast.success("State added successfully!");
+        navigate("/state");
       }
 
-      setTimeout(()=>{
+      setTimeout(() => {
         navigate("/state");
-      },2000)
+      }, 2000);
     } catch (error) {
       toast.error("Failed to save state. Please try again."); // Error toast
     }

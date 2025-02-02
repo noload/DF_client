@@ -6,60 +6,86 @@ const getAuthToken = () => {
 };
 
 // Get all warehouses
-export const getAllWarehouse = createAsyncThunk("warehouses/getAllWarehouse", async () => {
-  const token = getAuthToken();
-  const response = await axios.get("http://localhost:4000/api/warehouse", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data.data;
-});
+export const getAllWarehouse = createAsyncThunk(
+  "warehouses/getAllWarehouse",
+  async () => {
+    const token = getAuthToken();
+    const response = await axios.get("http://localhost:4000/api/warehouse", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data.data;
+  }
+);
 
 // Get warehouse by ID
-export const getWarehouseById = createAsyncThunk("warehouses/getWarehouseById", async (id) => {
-  const token = getAuthToken();
-  const response = await axios.get(`http://localhost:4000/api/warehouse/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data;
-});
+export const getWarehouseById = createAsyncThunk(
+  "warehouses/getWarehouseById",
+  async (id) => {
+    const token = getAuthToken();
+    const response = await axios.get(
+      `http://localhost:4000/api/warehouse/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  }
+);
 
 // Add warehouse
-export const addWarehouse = createAsyncThunk("warehouses/addWarehouse", async (warehouseData) => {
-  const token = getAuthToken();
-  const response = await axios.post("http://localhost:4000/api/warehouse", warehouseData, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data;
-});
+export const addWarehouse = createAsyncThunk(
+  "warehouses/addWarehouse",
+  async (warehouseData) => {
+    const token = getAuthToken();
+    const response = await axios.post(
+      "http://localhost:4000/api/warehouse",
+      warehouseData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  }
+);
 
 // Update warehouse
-export const updateWarehouse = createAsyncThunk("warehouses/updateWarehouse", async (warehouseData) => {
-  const token = getAuthToken();
-  console.log(warehouseData);
-  const response = await axios.put(`http://localhost:4000/api/warehouse/${warehouseData._id}`, warehouseData, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data;
-});
+export const updateWarehouse = createAsyncThunk(
+  "warehouses/updateWarehouse",
+  async (warehouseData) => {
+    const token = getAuthToken();
+    console.log(warehouseData);
+    const response = await axios.put(
+      `http://localhost:4000/api/warehouse/${warehouseData._id}`,
+      warehouseData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  }
+);
 
 // Delete warehouse
-export const deleteWarehouse = createAsyncThunk("warehouses/deleteWarehouse", async (id) => {
-  const token = getAuthToken();
-  await axios.delete(`http://localhost:4000/api/warehouse/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return id;
-});
+export const deleteWarehouse = createAsyncThunk(
+  "warehouses/deleteWarehouse",
+  async (id) => {
+    const token = getAuthToken();
+    await axios.delete(`http://localhost:4000/api/warehouse/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return id;
+  }
+);
 
 const warehouseSlice = createSlice({
   name: "warehouses",
@@ -118,7 +144,9 @@ const warehouseSlice = createSlice({
       })
       .addCase(updateWarehouse.fulfilled, (state, action) => {
         state.loading = false;
-        const index = state.warehouses.findIndex((warehouse) => warehouse._id === action.payload.id);
+        const index = state.warehouses.findIndex(
+          (warehouse) => warehouse._id === action.payload.id
+        );
         if (index !== -1) {
           state.warehouses[index] = action.payload;
         }
@@ -133,7 +161,9 @@ const warehouseSlice = createSlice({
       })
       .addCase(deleteWarehouse.fulfilled, (state, action) => {
         state.loading = false;
-        state.warehouses = state.warehouses.filter((warehouse) => warehouse._id !== action.payload);
+        state.warehouses = state.warehouses.filter(
+          (warehouse) => warehouse._id !== action.payload
+        );
       })
       .addCase(deleteWarehouse.rejected, (state, action) => {
         state.loading = false;

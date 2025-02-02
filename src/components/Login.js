@@ -76,7 +76,10 @@ const Login = () => {
 
   useEffect(() => {
     if (modalVisible) {
-      document.getElementById("resetEmail").focus();
+      const resetEmailInput = document.getElementById("resetEmail");
+      if (resetEmailInput) {
+        resetEmailInput.focus();
+      }
     }
   }, [modalVisible]);
 

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { addWarehouse, updateWarehouse } from "../redux/warehouseSlice"; // Redux actions for warehouse
+import { addWarehouse, updateWarehouse } from "../redux/warehouseSlice";
 import { useNavigate, useLocation } from "react-router-dom";
 import Layout from "./Layout";
 import { FaArrowLeft } from "react-icons/fa";
-import { toast, ToastContainer } from "react-toastify"; // Importing react-toastify
-import "react-toastify/dist/ReactToastify.css"; // Import styles for toast notifications
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import ErrorPage from "./ErrorPage";
 
@@ -23,7 +23,7 @@ const AddEditWarehousePage = () => {
     name: "",
     city: "",
     state: "",
-    status: "", // Status added here, but will not show for adding warehouse
+    status: "Active",
   });
 
   // State for fetching the states and cities list
@@ -37,9 +37,12 @@ const AddEditWarehousePage = () => {
         const token = localStorage.getItem("authToken");
 
         // Fetch states in a single call
-        const statesResponse = await axios.get("http://localhost:4000/api/state", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const statesResponse = await axios.get(
+          "http://localhost:4000/api/state",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
         setStates(statesResponse.data.data);
       } catch (error) {
@@ -78,21 +81,22 @@ const AddEditWarehousePage = () => {
   }, [formData.state]);
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+    const token =
+      localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
     if (!token || token == undefined) {
-      navigate('/');
+      navigate("/");
     }
 
     if (isEditing && existingWarehouse) {
       setFormData({
         name: existingWarehouse.name,
-        city: existingWarehouse.city._id, 
-        state: existingWarehouse.state._id, 
+        city: existingWarehouse.city._id,
+        state: existingWarehouse.state._id,
         status: existingWarehouse.status,
         _id: existingWarehouse._id,
       });
     }
-  }, [isEditing, existingWarehouse,navigate]);
+  }, [isEditing, existingWarehouse, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -117,8 +121,7 @@ const AddEditWarehousePage = () => {
       }
     } catch (error) {
       toast.error("Failed to save warehouse. Please try again."); // Error toast
-  if (error) return <ErrorPage message={error} />;
-
+      if (error) return <ErrorPage message={error} />;
     }
   };
 

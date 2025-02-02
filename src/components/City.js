@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getAllCity,
-  deleteCity,
-} from "../redux/citySlice"; // Ensure correct import
+import { getAllCity, deleteCity } from "../redux/citySlice"; // Ensure correct import
 import { FaEdit, FaTrash, FaSortUp, FaSortDown } from "react-icons/fa";
 import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +11,7 @@ import ErrorPage from "./ErrorPage";
 
 const CityPage = () => {
   const dispatch = useDispatch();
-  const { cities, loading, error } = useSelector((state) => state.cities);
+  const { cities = [], loading, error } = useSelector((state) => state.cities);
 
   const [sortedCities, setSortedCities] = useState([]);
   const [filteredCities, setFilteredCities] = useState([]); // New state for filtered cities
@@ -27,12 +24,15 @@ const CityPage = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+    const token =
+      localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
     if (!token || token == undefined) {
-      navigate('/');
+      navigate("/");
     }
 
     dispatch(getAllCity());
+    setFilteredCities(cities);
+    setSortedCities(cities);
   }, [dispatch, navigate]);
 
   useEffect(() => {
@@ -44,10 +44,10 @@ const CityPage = () => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = sortedCities.filter(
       (city) =>
-        city.name.toLowerCase().includes(lowercasedQuery) ||
-        city.code.toLowerCase().includes(lowercasedQuery)
+        city?.name?.toLowerCase().includes(lowercasedQuery) ||
+        city?.code?.toLowerCase().includes(lowercasedQuery)
     );
-    setFilteredCities(filtered);
+    setFilteredCities(filtered || []);
   }, [searchQuery, sortedCities]);
 
   const handleSort = (key, direction) => {
@@ -103,8 +103,8 @@ const CityPage = () => {
               type="text"
               placeholder="Search by city name or code"
               className="border border-gray-300 rounded-lg p-2 w-[550px] focus:outline-none focus:ring-2 focus:ring-yellow-500 transition duration-300"
-              value={searchQuery} 
-              onChange={(e) => setSearchQuery(e.target.value)} 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
@@ -134,7 +134,8 @@ const CityPage = () => {
                       <div className="ml-2 flex flex-col">
                         <FaSortUp
                           className={`${
-                            sortConfig.key === key && sortConfig.direction === "asc"
+                            sortConfig.key === key &&
+                            sortConfig.direction === "asc"
                               ? "text-yellow-900"
                               : "text-yellow-600"
                           } cursor-pointer`}
@@ -142,7 +143,8 @@ const CityPage = () => {
                         />
                         <FaSortDown
                           className={`${
-                            sortConfig.key === key && sortConfig.direction === "desc"
+                            sortConfig.key === key &&
+                            sortConfig.direction === "desc"
                               ? "text-yellow-900"
                               : "text-yellow-600"
                           } cursor-pointer`}
@@ -156,44 +158,55 @@ const CityPage = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredCities.map((city, index) => (
-                <tr
-                  key={city._id}
-                  className={`${
-                    index % 2 === 0 ? "bg-gray-100" : "bg-white"
-                  } hover:bg-gray-100 transition duration-200`}
-                >
-                  <td className="px-6 py-4 text-center">{city._id}</td>
-                  <td className="px-6 py-4 text-center">{city.name}</td>
-                  <td className="px-6 py-4 text-center">{city.code}</td>
-                  <td className="px-6 py-4 text-center">
-                    {city.state && city.state.name ? city.state.name : "Not Available"}
-                  </td>
-                  <td
-                    className={`px-6 py-4 font-semibold text-center ${
-                      city.status === "Active" ? "text-green-500" : "text-red-500"
-                    }`}
+              {filteredCities?.length > 0 &&
+                filteredCities.map((city, index) => (
+                  <tr
+                    key={city._id}
+                    className={`${
+                      index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                    } hover:bg-gray-100 transition duration-200`}
                   >
-                    {city.status}
-                  </td>
-                  <td className="px-6 py-4 flex items-center justify-center space-x-4">
-                    <button
-                      onClick={() => handleEdit(city)}
-                      className="text-blue-500 hover:text-blue-700 transition duration-300"
-                      title="Edit"
+                    <td className="px-6 py-4 text-center">
+                      {city?._id || "NA"}
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      {city?.name || "NA"}
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      {city?.code || "NA"}
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      {city.state && city.state.name
+                        ? city.state.name
+                        : "Not Available"}
+                    </td>
+                    <td
+                      className={`px-6 py-4 font-semibold text-center ${
+                        city.status === "Active"
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }`}
                     >
-                      <FaEdit className="text-xl" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(city._id)}
-                      className="text-red-500 hover:text-red-700 transition duration-300"
-                      title="Delete"
-                    >
-                      <FaTrash className="text-xl" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                      {city.status}
+                    </td>
+                    <td className="px-6 py-4 flex items-center justify-center space-x-4">
+                      <button
+                        onClick={() => handleEdit(city)}
+                        className="text-blue-500 hover:text-blue-700 transition duration-300"
+                        title="Edit"
+                      >
+                        <FaEdit className="text-xl" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(city._id)}
+                        className="text-red-500 hover:text-red-700 transition duration-300"
+                        title="Delete"
+                      >
+                        <FaTrash className="text-xl" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>

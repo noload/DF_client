@@ -11,7 +11,9 @@ import LoadingPage from "./LoadingPage";
 
 const WarehousePage = () => {
   const dispatch = useDispatch();
-  const { warehouses, loading, error } = useSelector((state) => state.warehouses);
+  const { warehouses, loading, error } = useSelector(
+    (state) => state.warehouses
+  );
 
   const [sortedWarehouses, setSortedWarehouses] = useState([]);
   const [filteredWarehouses, setFilteredWarehouses] = useState([]);
@@ -24,12 +26,15 @@ const WarehousePage = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+    const token =
+      localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
     if (!token || token === undefined) {
-      navigate('/');
+      navigate("/");
     }
 
     dispatch(getAllWarehouse());
+    setSortedWarehouses(warehouses);
+    setFilteredWarehouses(warehouses);
   }, [dispatch]);
 
   useEffect(() => {
@@ -38,12 +43,18 @@ const WarehousePage = () => {
 
   // Filter warehouses based on search query
   useEffect(() => {
-    const filtered = warehouses.filter(
-      (warehouse) =>
-        warehouse.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        warehouse.city?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        warehouse.state?.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filtered =
+      warehouses.length > 0 &&
+      warehouses.filter(
+        (warehouse) =>
+          warehouse?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          warehouse?.city?.name
+            ?.toLowerCase()
+            ?.includes(searchQuery.toLowerCase()) ||
+          warehouse.state?.name
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase())
+      );
     setFilteredWarehouses(filtered);
   }, [searchQuery, warehouses]);
 
@@ -132,7 +143,8 @@ const WarehousePage = () => {
                       <div className="ml-2 flex flex-col">
                         <FaSortUp
                           className={`${
-                            sortConfig.key === key && sortConfig.direction === "asc"
+                            sortConfig.key === key &&
+                            sortConfig.direction === "asc"
                               ? "text-yellow-700"
                               : "text-yellow-400"
                           } cursor-pointer`}
@@ -140,7 +152,8 @@ const WarehousePage = () => {
                         />
                         <FaSortDown
                           className={`${
-                            sortConfig.key === key && sortConfig.direction === "desc"
+                            sortConfig.key === key &&
+                            sortConfig.direction === "desc"
                               ? "text-yellow-700"
                               : "text-yellow-400"
                           } cursor-pointer`}
@@ -154,44 +167,51 @@ const WarehousePage = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-300">
-              {filteredWarehouses.map((warehouse, index) => (
-                <tr
-                  key={warehouse._id}
-                  className={`${
-                    index % 2 === 0 ? "bg-gray-100" : "bg-white"
-                  } hover:bg-gray-100 transition duration-200 p-2`}
-                >
-                  <td className="px-6 py-4 text-center">{warehouse._id}</td>
-                  <td className="px-6 py-4 text-center">{warehouse.name}</td>
-                  <td className="px-6 py-4 text-center">{warehouse.city?.name || "Not Available"}</td>
-                  <td className="px-6 py-4 text-center">{warehouse.state?.name || "Not Available"}</td>
-                  <td
-                    className={`px-6 py-4 font-semibold text-center ${
-                      warehouse.status === "Active"
-                        ? "text-green-500"
-                        : "text-red-500"
-                    }`}
+              {filteredWarehouses?.length > 0 &&
+                filteredWarehouses.map((warehouse, index) => (
+                  <tr
+                    key={warehouse._id}
+                    className={`${
+                      index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                    } hover:bg-gray-100 transition duration-200 p-2`}
                   >
-                    {warehouse.status}
-                  </td>
-                  <td className="px-6 py-4 text-center flex justify-center space-x-4">
-                    <button
-                      onClick={() => handleEdit(warehouse)}
-                      className="text-blue-500 hover:text-blue-700 transition duration-300"
-                      title="Edit"
+                    <td className="px-6 py-4 text-center">{warehouse._id}</td>
+                    <td className="px-6 py-4 text-center">{warehouse.name}</td>
+                    <td className="px-6 py-4 text-center">
+                      {warehouse.city?.name || "Not Available"}
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      {warehouse.state?.name || "Not Available"}
+                    </td>
+                    <td
+                      className={`px-6 py-4 font-semibold text-center ${
+                        warehouse.status === "Active"
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }`}
                     >
-                      <FaEdit className="text-xl" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(warehouse._id || warehouse.id)}
-                      className="text-red-500 hover:text-red-700 transition duration-300"
-                      title="Delete"
-                    >
-                      <FaTrash className="text-xl" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                      {warehouse.status}
+                    </td>
+                    <td className="px-6 py-4 text-center flex justify-center space-x-4">
+                      <button
+                        onClick={() => handleEdit(warehouse)}
+                        className="text-blue-500 hover:text-blue-700 transition duration-300"
+                        title="Edit"
+                      >
+                        <FaEdit className="text-xl" />
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleDelete(warehouse._id || warehouse.id)
+                        }
+                        className="text-red-500 hover:text-red-700 transition duration-300"
+                        title="Delete"
+                      >
+                        <FaTrash className="text-xl" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
